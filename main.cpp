@@ -1,6 +1,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include <iostream>
 #include <string>
@@ -14,22 +15,20 @@ int main( int argc, char** argv )
    * Zoom In / Zoom Out with Image Pyramids
    * http://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html#pyramids
    * */
-  cout << "OpenCV Playground \n";
+  printf("OpenCV Playground \n");
   for ( int i = 0; i < argc; i++)
   {
-    cout << "arg[" << i << "] = " << argv[i] << "\n";
+    printf("arg[%d] = %s\n", i, argv[i]);
   }
 
   if( argc != 2)
   {
-    cout <<" Usage: test ImageToLoadAndDisplay" << endl;
+    printf(" Usage: test ImageToLoadAndDisplay\n");
     return -1;
   }
 
-  Mat image;
+  Mat image, display;
   image = imread(argv[1], CV_LOAD_IMAGE_COLOR);   // Read the file
-
-  cout << image.size().width << ", " << image.size().height;
 
   if(! image.data )                              // Check for invalid input
   {
@@ -37,10 +36,15 @@ int main( int argc, char** argv )
       return -1;
   }
 
+  int scale = 8;
+  printf("%d x %d\n", image.size().width,  image.size().height);
+  printf("%d x %d\n", image.size().width / scale,  image.size().height / scale);
+  resize(image, display, Size(image.size().width / scale, image.size().height / scale));
+
   string window_name = "Display window";
   namedWindow(window_name, WINDOW_NORMAL | WINDOW_KEEPRATIO );// Create a window for display.
-  imshow(window_name, image );                   // Show our image inside it.
-  resizeWindow(window_name, 800, 600);
+  imshow(window_name, display );                   // Show our image inside it.
+  //resizeWindow(window_name, 800, 600);
   waitKey(0);                                          // Wait for a keystroke in the window
   return 0;
 }

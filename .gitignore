@@ -1,3 +1,4 @@
 # Ignore Build output
 test
 *.o
+*.plist
