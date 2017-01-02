@@ -10,6 +10,10 @@ using namespace std;
 
 int main( int argc, char** argv )
 {
+  /*
+   * Zoom In / Zoom Out with Image Pyramids
+   * http://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html#pyramids
+   * */
   cout << "OpenCV Playground \n";
   for ( int i = 0; i < argc; i++)
   {
