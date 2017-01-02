@@ -10,15 +10,19 @@ it maintained that I may point peers to my code snippets as working examples.
 
 ## Setup OpenCV
 
-- `git clone https://github.com/opencv/opencv.git ~/opencv`
-- `cd ~/opencv`
-- `cmake .`
-- `make`
-- `make install`
+```
+git clone https://github.com/opencv/opencv.git ~/opencv
+cd ~/opencv
+cmake .
+make
+make install
+```
 
 ## Setup this project
 
-- `git clone https://github.com/neozenith/opencv_example ~/opencv_example/`
-- `cd ~/opencv_example/`
-- `make`
-
+```
+git clone https://github.com/neozenith/opencv_example ~/opencv_example/
+cd ~/opencv_example/
+make
+./test name_of_an_image.jpg
+```

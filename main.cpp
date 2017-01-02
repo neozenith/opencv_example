@@ -25,12 +25,13 @@ int main( int argc, char** argv )
   Mat image;
   image = imread(argv[1], CV_LOAD_IMAGE_COLOR);   // Read the file
 
+  cout << image.size().width << ", " << image.size().height;
+
   if(! image.data )                              // Check for invalid input
   {
       cout <<  "Could not open or find the image" << std::endl ;
       return -1;
   }
-  cout << image.size().width << ", " << image.size().height;
 
   string window_name = "Display window";
   namedWindow(window_name, WINDOW_NORMAL | WINDOW_KEEPRATIO );// Create a window for display.
