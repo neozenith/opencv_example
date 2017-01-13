@@ -7,7 +7,8 @@ LIBS := -lstdc++ \
 	-lopencv_imgcodecs \
 	-lopencv_highgui \
 	-lopencv_core \
-	-lopencv_imgproc
+	-lopencv_imgproc \
+	-lopencv_videoio
 
 
 # Build Targets
