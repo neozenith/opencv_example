@@ -24,5 +24,10 @@ make install
 git clone https://github.com/neozenith/opencv_example ~/opencv_example/
 cd ~/opencv_example/
 make
-./test name_of_an_image.jpg
+./test
+
+ Usage: test [option] filename
+  -i, --image Display filtered image
+  -v, --video Display filtered video
+  -c, --camera  Display filtered webcamera stream. Uses default camera.
 ```
