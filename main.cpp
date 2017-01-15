@@ -3,7 +3,6 @@
  * */
 
 #include "main.h"
-#include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -15,39 +14,56 @@
 using namespace cv;
 using namespace std;
 
+void usage(){
+  printf(" Usage: test [option] filename\n");
+  printf("\t-i, --image\tDisplay filtered image\n");
+  printf("\t-v, --video\tDisplay filtered video\n");
+  printf("\t-c, --camera\tDisplay filtered webcamera stream. Uses default camera.\n");
+}
+
 int main( int argc, char** argv )
 {
-  /*
-   * Zoom In / Zoom Out with Image Pyramids
-   * http://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html#pyramids
-   * */
-  printf("OpenCV Playground \n");
+
   for ( int i = 0; i < argc; i++)
   {
     printf("arg[%d] = %s\n", i, argv[i]);
   }
 
-  if( argc != 2)
+  // Check number of arguments
+  if( argc < 2)
   {
-    printf(" Usage: test ImageToLoadAndDisplay\n");
+    usage();
     return -1;
   }
 
-  // return showImage(argv[1]);
-  //return showVideo(argv[1]);
-  return showCamera();
-}
+  int exitValue = 0;
+  string argOpt (argv[1]);
 
+  if ( argOpt == "-i" || argOpt == "--image" )
+  {
+    exitValue = showImage(argv[2]);
+  }
+  else if ( argOpt == "-v" || argOpt == "--video" )
+  {
+    exitValue = showVideo(argv[2]);
+  }
+  else if ( argOpt == "-c" || argOpt == "--camera" )
+  {
+    exitValue = showCamera();
+  }
+
+  return exitValue;
+}
 
 int showImage(char* filename)
 {
-  Mat image, display;
+  Mat image, display, edges;
   image = imread(filename, CV_LOAD_IMAGE_COLOR);   // Read the file
 
   if(! image.data )                              // Check for invalid input
   {
-      cout <<  "Could not open or find the image" << std::endl ;
-      return -1;
+    cout <<  "Could not open or find the image" << std::endl ;
+    return -1;
   }
 
   int scale = 4;
@@ -57,7 +73,10 @@ int showImage(char* filename)
 
   string window_name = "Display window";
   namedWindow(window_name, WINDOW_NORMAL | WINDOW_KEEPRATIO );// Create a window for display.
-  imshow(window_name, display );                   // Show our image inside it.
+
+  edges = applyFilter(display);
+
+  imshow(window_name, edges );                   // Show our image inside it.
   //resizeWindow(window_name, 800, 600);
   waitKey(0);                                          // Wait for a keystroke in the window
   return 0;
@@ -75,11 +94,11 @@ int showVideo(char* filename)
   {
       Mat frame;
       cap >> frame; // get a new frame from camera
-      cvtColor(frame, edges, CV_BGR2GRAY);
-      GaussianBlur(edges, edges, Size(7,7), 1.5, 1.5);
-      Canny(edges, edges, 0, 30, 3);
+
+      edges = applyFilter(frame);
+
       imshow("edges", edges);
-      if(waitKey(5) == 'q')
+      if(waitKey(3) == 'q')
         break;
   }
   // the camera will be deinitialized automatically in VideoCapture destructor
@@ -88,39 +107,29 @@ int showVideo(char* filename)
 
 int showCamera()
 {
-  Mat frame;
-  Mat edges;
-  //--- INITIALIZE VIDEOCAPTURE
+  Mat frame, edges;
   VideoCapture cap;
-  // open the default camera using default API
+
   cap.open(0);
-  // OR advance usage: select any API backend
   int deviceID = 0;             // 0 = open default camera
   int apiID = cv::CAP_ANY;      // 0 = autodetect default API
-  // open selected camera using selected API
   cap.open(deviceID + apiID);
-  // check if we succeeded
   if (!cap.isOpened()) {
       cerr << "ERROR! Unable to open camera\n";
       return -1;
   }
-  //--- GRAB AND WRITE LOOP
+
   cout << "Start grabbing" << endl
       << "Press any key to terminate" << endl;
   for (;;)
   {
-      // wait for a new frame from camera and store it into 'frame'
       cap.read(frame);
-      // check if we succeeded
       if (frame.empty()) {
           cerr << "ERROR! blank frame grabbed\n";
           break;
       }
-      // show live and wait for a key with timeout long enough to show images
 
-      cvtColor(frame, edges, CV_BGR2GRAY);
-      GaussianBlur(edges, edges, Size(7,7), 1.5, 1.5);
-      Canny(edges, edges, 0, 40, 3);
+      edges = applyFilter(frame);
       imshow("edges", edges);
 
       if (waitKey(5) == 'q')
@@ -128,4 +137,13 @@ int showCamera()
   }
   // the camera will be deinitialized automatically in VideoCapture destructor
   return 0;
+}
+
+Mat applyFilter(Mat image)
+{
+  Mat output;
+  cvtColor(image, output, CV_BGR2GRAY);
+  GaussianBlur(output, output, Size(7,7), 1.5, 1.5);
+  Canny(output, output, 0, 40, 3);
+  return output;
 }
