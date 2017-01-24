@@ -100,13 +100,14 @@ int showVideo(char* filename)
   if(!cap.isOpened())  // check if we succeeded
     return -1;
 
-  Mat edges, fgMaskMOG2_small, masked;
+  Mat edges, fgMaskMOG2_small, masked, blur_frame;
   pMOG2 = createBackgroundSubtractorMOG2();
 
   while( (char)keyboard != 'q' && (char)keyboard != 27 ){
     Mat frame;
     cap >> frame; // get a new frame from camera
 
+    GaussianBlur(frame, blur_frame, Size(9,9), 1.5, 1.5);
     pMOG2->apply(frame, fgMaskMOG2);
     frame.copyTo(masked, fgMaskMOG2);
     edges = applyFilter(frame);
@@ -150,13 +151,14 @@ int showCamera()
   cout << "Start grabbing" << endl
       << "Press any key to terminate" << endl;
 
-  Mat frame, edges, fgMaskMOG2_small, masked;
+  Mat frame, edges, fgMaskMOG2_small, masked, blur_frame;
   pMOG2 = createBackgroundSubtractorMOG2();
 
   while( (char)keyboard != 'q' && (char)keyboard != 27 ){
     Mat frame;
     cap >> frame; // get a new frame from camera
 
+    GaussianBlur(frame, blur_frame, Size(7,7), 1.5, 1.5);
     pMOG2->apply(frame, fgMaskMOG2);
     frame.copyTo(masked, fgMaskMOG2);
     edges = applyFilter(frame);
